@@ -1,0 +1,33 @@
+[System]
+Name='Exercise3'
+Type='sugeno'
+Version=2.0
+NumInputs=1
+NumOutputs=1
+NumRules=3
+AndMethod='prod'
+OrMethod='probor'
+ImpMethod='prod'
+AggMethod='sum'
+DefuzzMethod='wtaver'
+
+[Input1]
+Name='input1'
+Range=[-1 1]
+NumMFs=3
+MF1='in1mf1':'gaussmf',[0.212102911691693 -0.923609458350089]
+MF2='in1mf2':'gaussmf',[0.344076566011247 0.248793643928758]
+MF3='in1mf3':'gaussmf',[0.489376637820024 0.928002894112991]
+
+[Output1]
+Name='output'
+Range=[-0.64723875 0.64723875]
+NumMFs=3
+MF1='out1mf1':'linear',[3.20587396755788 2.4787243834461]
+MF2='out1mf2':'linear',[1.31140921569969 -0.823170853815801]
+MF3='out1mf3':'linear',[-3.36338389097392 2.83639707098273]
+
+[Rules]
+1, 1 (1) : 1
+2, 2 (1) : 1
+3, 3 (1) : 1
