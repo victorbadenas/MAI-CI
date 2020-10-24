@@ -4,4 +4,4 @@ m = 0.43;
 J = 0.0090;
 c = 0.00035;
 g = 9.80665;
-fisfile = readfis('fisfile');
+fismat = readfis('workingFis5');
