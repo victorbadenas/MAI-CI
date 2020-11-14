@@ -9,34 +9,36 @@ VAL_RATIO=0.8;
 EPOCHS=1;
 
 %% LOAD DATA
+load('data/Input.mat');
+load('data/Output.mat');
 % load('data/caltech101_silhouettes_16.mat');
 % load('data/caltech101_silhouettes_16_split1.mat');
-load('data/caltech101_silhouettes_28.mat');
+% load('data/caltech101_silhouettes_28.mat');
 % load('data/caltech101_silhouettes_28_split1.mat');
-X=X';
-X=X(:, 1:200);
-Y=Y(:, 1:200);
+% Input=Input(:, 1:200);
+% Output=Output(:, 1:200);
 
 %% SIZE OF DATA
-size(X)
-size(Y)
+size(Input)
+size(Output)
 
 %% NET INICIALIZATION
 
-net=perceptron;
-
+% net=perceptron;
+net=feedforwardnet([20 2]);
+view(net)
 %% DATA DIVISION
 
-% net.divideFcn = 'dividerand';   % divideFCN allow to change the way the data is
+net.divideFcn = 'dividerand';   % divideFCN allow to change the way the data is
                                 % divided into training, validation and test
                                 % data sets.
-% net.divideParam.trainRatio = TRAIN_RATIO; % Ratio of data used as training set
-% net.divideParam.valRatio = VAL_RATIO;
+net.divideParam.trainRatio = TRAIN_RATIO; % Ratio of data used as training set
+net.divideParam.valRatio = VAL_RATIO;
 
 % Ratio of data used as validation set
-% net.divideParam.testRatio = TEST_RATIO; % Ratio of data used as test set
+net.divideParam.testRatio = TEST_RATIO; % Ratio of data used as test set
 % net.trainParam.max_fail = 6; % validation check parameter
-% net.trainParam.epochs=EPOCHS; % number of epochs parameter
+net.trainParam.epochs=EPOCHS; % number of epochs parameter
 % net.trainParam.min_grad=1e-5; % minimum performance gradient
 
 %% LAYERS TYPE DEFINITION
@@ -58,5 +60,16 @@ net=perceptron;
 
 %% TRAIN
 
-[net,tr,a,b] = train(net,X,Y);
+% [net,tr,a,b] = train(net,Input,Output);
+
+% Input=cast(Input, 'double');
+% Output=cast(Output, 'double');
+[net,tr,a,b] = train(net,Input,Output);
+% [Input,T] = vinyl_dataset;
+% Inputgpu = gpuArray(Input);
+% Tgpu = gpuArray(T);
+% net = configure(net,Input,T);
+% net = train(net,Inputgpu,Tgpu);
+% Outputgpu = net(Inputgpu);
+% Output = gather(Outputgpu); 
 view(net)
