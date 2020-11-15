@@ -18,14 +18,14 @@ load('data/Output.mat');
 % Input=Input(:, 1:200);
 % Output=Output(:, 1:200);
 
-%% SIZE OF DATA
+%% SIZE OF DATA20
 size(Input)
 size(Output)
 
 %% NET INICIALIZATION
 
 % net=perceptron;
-net=feedforwardnet([20 2]);
+net=feedforwardnet([20, 2]);
 view(net)
 %% DATA DIVISION
 
@@ -57,19 +57,17 @@ net.trainParam.epochs=EPOCHS; % number of epochs parameter
 
 % net.trainParam.mc = 0.8; % momentum parameter
 % net.trainParam.lr = 0.01; % learning rate parameter
+net.inputs{1}.processFcns = {'mapminmax'};
 
 %% TRAIN
 
 % [net,tr,a,b] = train(net,Input,Output);
+[net,tr,Y,E] = train(net,Input,Output,'useGPU','yes');
 
-% Input=cast(Input, 'double');
-% Output=cast(Output, 'double');
-[net,tr,a,b] = train(net,Input,Output);
-% [Input,T] = vinyl_dataset;
-% Inputgpu = gpuArray(Input);
-% Tgpu = gpuArray(T);
-% net = configure(net,Input,T);
-% net = train(net,Inputgpu,Tgpu);
-% Outputgpu = net(Inputgpu);
-% Output = gather(Outputgpu); 
+% net = configure(net,Input,Output);
+% Xgpu = gpuArray(Input);
+% Tgpu = gpuArray(Output);
+% net = train(net,Xgpu,Tgpu);
+% Ygpu = net(Xgpu);
+% Y = gather(Ygpu); 
 view(net)
