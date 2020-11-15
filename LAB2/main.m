@@ -33,3 +33,7 @@ for pIdx = 1:numPercentages
     end
 end
 save('metrics.mat','allPerformances','allAccuracies');
+mkdir csv_acc
+mkdir csv_perf
+save4Dcsv(allAccuracies,'csv_acc',["Train" "Val" "Test"],["80-10-10" "40-20-40" "10-10-80"])
+save4Dcsv(allPerformances,'csv_perf',["Train" "Val" "Test"],["80-10-10" "40-20-40" "10-10-80"])
