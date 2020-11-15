@@ -1,0 +1,36 @@
+{
+    "functions": [
+      {
+        "hidden": "logsig",
+        "output": "logsig",
+        "cost": "mse"
+      },
+      {
+        "hidden": "logsig",
+        "output": "softmax",
+        "cost": "crossentropy"
+      }
+    ],
+    "hiddenUnits": [
+      50,
+      200,
+      500
+    ],
+    "percentages": [
+      {
+        "training": 80,
+        "validation": 10,
+        "test": 10
+      },
+      {
+        "training": 40,
+        "validation": 20,
+        "test": 40
+      },
+      {
+        "training": 10,
+        "validation": 10,
+        "test": 80
+      }
+    ]
+}
