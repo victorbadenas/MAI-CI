@@ -1,4 +1,4 @@
-function [performances, accuracies] = trainNN(X,Y,epochs,functions,hiddenUnits,split,nRuns,momentum,lr,gpu)
+function [performances, accuracies] = trainNN(X,Y,epochs,functions,hiddenUnits,split,nRuns,trainFcn,trainFcnParams,gpu)
     performances = zeros(3,nRuns);
     accuracies = zeros(3,nRuns);
     for i = 1:nRuns
@@ -10,10 +10,12 @@ function [performances, accuracies] = trainNN(X,Y,epochs,functions,hiddenUnits,s
         net.layers{end}.transferFcn = functions.output;
         net.performFcn = functions.cost;
 
-        net.trainFcn = 'traingdm';
-        net.trainParam.mc = momentum;
-        net.trainParam.lr = lr;
-        net.trainParam.epochs = epochs;
+        net.trainFcn = trainFcn;
+        
+        trainFcnParamsNames = fieldnames(trainFcnParams);
+        for idx = 1:length(trainFcnParamsNames)
+            net.trainParam.(trainFcnParamsNames{idx}) = trainFcnParams.(trainFcnParamsNames{idx});
+        end
 
         net.divideFcn = 'dividerand';
         net.divideParam.trainRatio = split.training;
