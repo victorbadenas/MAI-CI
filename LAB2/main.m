@@ -16,10 +16,10 @@ load('data/Output.mat');
 
 %% CONSTANT VALUES
 EPOCHS = 1000;
-NRUNS = 1;
+NRUNS = 5;
 GPU = 1;
-trainFcn = 'traingdx';
-trainFcnParams = 0;
+trainFcn = 'traingdm';
+trainFcnParams = struct('lr',0.1,'mc',0.8);
 
 %% INIT ACCURACIES AND PERFORMANCES
 allPerformances = zeros(3,numPercentages,numHiddenUnits,numFunctions);

@@ -4,7 +4,7 @@ clear all; close all;
 
 %% GLOBAL VARIABLES
 
-HIDDEN_UNITS=500;
+HIDDEN_UNITS=200;
 TRAIN_RATIO=0.8;
 TEST_RATIO=0.1;
 VAL_RATIO=0.1;
@@ -37,7 +37,7 @@ net.divideParam.testRatio = TEST_RATIO; % Ratio of data used as test set
 
 %% LAYERS TYPE DEFINITION
 
-net.trainFcn = 'traincgf';
+net.trainFcn = 'traincgb';
 
 net.trainParam.max_fail = 6; % validation check parameter
 net.trainParam.epochs = EPOCHS; % number of epochs parameter
