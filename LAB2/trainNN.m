@@ -13,7 +13,7 @@ function [performances,accuracies,bestNet,bestTr] = trainNN(X,Y,epochs,functions
 
         net.trainFcn = trainFcn;
         
-        if trainFcnParams ~= 0
+        if isstruct(trainFcnParams)
             trainFcnParamsNames = fieldnames(trainFcnParams);
             for idx = 1:length(trainFcnParamsNames)
                 net.trainParam.(trainFcnParamsNames{idx}) = trainFcnParams.(trainFcnParamsNames{idx});
