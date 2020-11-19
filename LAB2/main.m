@@ -1,24 +1,31 @@
+%% CLEAN
 clear all; close all;
 
+%% LOAD CONFIG JSON
 fname = 'configuration/configs.json';
 configs = jsondecode(fileread(fname));
 
+%% NUMBER OF PARAMETERS TO LOOP INTO
 numFunctions = length(configs.functions);
 numHiddenUnits = length(configs.hiddenUnits);
 numPercentages = length(configs.percentages);
 
+%% LOAD DATA
 load('data/Input.mat');
 load('data/Output.mat');
 
+%% CONSTANT VALUES
 EPOCHS = 1000;
-NRUNS = 3;
+NRUNS = 1;
 GPU = 1;
 trainFcn = 'traingdx';
-trainFcnParams = struct('lr',0.01, 'lr_inc', 1.01, 'lr_dec', 0.7, 'max_perf_inc', 1.03, 'mc', 0.9);
+trainFcnParams = 0;
 
+%% INIT ACCURACIES AND PERFORMANCES
 allPerformances = zeros(3,numPercentages,numHiddenUnits,numFunctions);
 allAccuracies = zeros(3,numPercentages,numHiddenUnits,numFunctions);
 
+%% LOOP FOR ALL FUNCTION CONFIGS, HIDDEN UNITS AND PERCENTAGE SPLITS
 for pIdx = 1:numPercentages
     percentages = configs.percentages(pIdx);
     for hIdx = 1:numHiddenUnits
@@ -32,6 +39,8 @@ for pIdx = 1:numPercentages
         end
     end
 end
+
+%% SAVE AS CSV AND MAT
 save('metrics_.mat','allPerformances','allAccuracies');
 mkdir csv_acc_
 mkdir csv_perf_
