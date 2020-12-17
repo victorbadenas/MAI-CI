@@ -1,59 +1,64 @@
 %https://es.mathworks.com/matlabcentral/answers/453836-how-can-i-store-the-value-at-each-iteration-of-a-genetic-algorithm
+function [x,Fval,vals] = Rosenbrock(Generations, PopulationSize, PopInitRange, SelectionFcn, FitnessScalingFcn) 
+    arguments
+        Generations {mustBeNumeric, mustBeReal, mustBeInteger} = 300;
+        PopulationSize {mustBeNumeric, mustBeReal, mustBeInteger} = 100;
+        PopInitRange (2,2) {mustBeNumeric,mustBeReal} = [-2 -2; 2 2];
+        SelectionFcn = @selectiontournament;
+        FitnessScalingFcn = @fitscalingprop;
+    end
+    %FitnessFunction = @(x)(1-x(1))^2+100*(x(2)-x(1)^2)^2;
+    FitnessFunction = @myFitness;
+    numberOfVariables = 2;
+    vals = [];
 
-[x, fval, vals] = Rosenbrock  
-
-function [x,Fval,vals] = Rosenbrock 
-%FitnessFunction = @(x)(1-x(1))^2+100*(x(2)-x(1)^2)^2;
-FitnessFunction = @myFitness;
-numberOfVariables = 2;
-vals = [];
-
-%opts = gaoptimset('Display', 'none');
-opts = gaoptimset('Display', 'off', 'OutputFcn',@my_caca);
-%opts = gaoptimset('PlotFcns',{@gaplotbestf,@gaplotdistance});
-
-%--Number of Generations
-opts = gaoptimset(opts, 'Generations', 300); % 'StallGenLimit', 50
-
-%--Population Size
-opts = gaoptimset(opts, 'PopulationSize', 50);
-
-%--Initial Range
-opts = gaoptimset(opts, 'PopInitRange',[-2 -2; 2 2]);
-
-%--Selection
-opts = gaoptimset(opts, 'SelectionFcn',@selectiontournament, 'FitnessScalingFcn',@fitscalingprop);
-
-%--Reproduction (crossover and mutation)
-%opts = gaoptimset(opts, 'CrossoverFcn',@crossoverscattered);
-%opts = gaoptimset(opts, 'MutationFcn',@mutationgaussian);
-
-rng default %rng
-
-
-record = [];
-for n=1:1
-    opts = gaoptimset(opts, 'CrossoverFraction', n);
-    [x, Fval, exitFlag, Output] = ga(FitnessFunction, numberOfVariables, [], [], [], [], [], [], [], opts);
-    record = [record; Fval];
+    %opts = gaoptimset('Display', 'none');
+    opts = gaoptimset('Display', 'off', 'OutputFcn',@my_caca);
+    %opts = gaoptimset('PlotFcns',{@gaplotbestf,@gaplotdistance});
     
-    fprintf('The number of generations was : %d\n', Output.generations);
-    fprintf('The number of function evaluations was : %d\n', Output.funccount);
-    fprintf('The best function value found was : %g\n', Fval);
-    formatSpec = 'The best function value was found at point: %7.4f %7.4f \n';
-    fprintf(formatSpec,x);
-end
+    %--Number of Generations
+    opts = gaoptimset(opts, 'Generations', Generations); % 'StallGenLimit', 50
 
-function y = myFitness(x)
-    y = 100*(x(1)^2-x(2))^2 + (1-x(1))^2;
-    vals(1:2) = x;
-end
+    %--Population Size
+    opts = gaoptimset(opts, 'PopulationSize', PopulationSize);
 
-function [state, options,optchanged] =  my_caca(options,state,flag)  
-    bananaout(vals, state, flag);
-    optchanged = false; 
-    %disp(vals); 
-end
+    %--Initial Range
+    opts = gaoptimset(opts, 'PopInitRange', PopInitRange);
+
+    %--Selection
+    opts = gaoptimset(opts, 'SelectionFcn', SelectionFcn, 'FitnessScalingFcn', FitnessScalingFcn);
+
+    %--Reproduction (crossover and mutation)
+    %opts = gaoptimset(opts, 'CrossoverFcn',@crossoverscattered);
+    %opts = gaoptimset(opts, 'MutationFcn',@mutationgaussian);
+
+    rng default %rng
+
+
+    record = [];
+    for n=0:.05:1
+        opts = gaoptimset(opts, 'CrossoverFraction', n);
+        [x, Fval, exitFlag, Output] = ga(FitnessFunction, numberOfVariables, [], [], [], [], [], [], [], opts);
+        record = [record; Fval];
+
+        fprintf('The number of generations was : %d\n', Output.generations);
+        fprintf('The number of function evaluations was : %d\n', Output.funccount);
+        fprintf('The best function value found was : %g\n', Fval);
+        formatSpec = 'The best function value was found at point: %7.4f %7.4f \n';
+        fprintf(formatSpec,x);
+    end
+
+    function y = myFitness(x)
+        y = 100*(x(1)^2-x(2))^2 + (1-x(1))^2;
+        vals(1:2) = x;
+    end
+
+    function [state, options,optchanged] =  my_caca(options,state,flag)
+    %     stater
+        bananaout(vals, state, flag);
+        optchanged = false; 
+        %disp(vals); 
+    end
 end
 
 %plot(0:.05:1, record);
