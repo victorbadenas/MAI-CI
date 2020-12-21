@@ -30,11 +30,9 @@ function [x,Fval,vals] = Rosenbrock(Generations, PopulationSize, FitnessScalingF
 
     %--Selection
     opts = gaoptimset(opts, 'SelectionFcn', SelectionFcn, 'FitnessScalingFcn', FitnessScalingFcn);
+    
+    %--Reproduction
     opts = gaoptimset(opts, 'MutationFcn', MutationFcn, 'CrossoverFcn', CrossoverFcn);
-
-    %--Reproduction (crossover and mutation)
-    %opts = gaoptimset(opts, 'CrossoverFcn',@crossoverscattered);
-    %opts = gaoptimset(opts, 'MutationFcn',@mutationgaussian);
 
     rng default %rng
 
