@@ -16,13 +16,31 @@ FitnessScalingFcns = {@fitscalingrank, @fitscalingprop};
 SelectionFcns = {@selectiontournament, @selectionuniform, @selectionroulette};
 MutationFcns = {@mutationgaussian, @mutationuniform};
 CrossoverFcns = {@crossoversinglepoint, @crossovertwopoint, @crossoverintermediate, @crossoverarithmetic};
+CrossoverFractions = 0:.1:1;
+PopInitValues = 2:2:10;
 
-elements = {Populationsize, Generations, 1:length(FitnessScalingFcns), 1:length(SelectionFcns), 1:length(MutationFcns), 1:length(CrossoverFcns)}; %cell array with N vectors to combine
+elements = {Populationsize, Generations, 1:length(FitnessScalingFcns), 1:length(SelectionFcns), 1:length(MutationFcns), 1:length(CrossoverFcns), CrossoverFractions, PopInitValues}; %cell array with N vectors to combine
 combinations = cell(1, numel(elements)); %set up the varargout result
 [combinations{:}] = ndgrid(elements{:});
 combinations = cellfun(@(x) x(:), combinations,'uniformoutput',false); %there may be a better way to do this
 parameterCombinations = [combinations{:}]; % NumberOfCombinations by N matrix. Each row is unique.
 
+parameterCombinations = [90 240 1 1 1 4 1 2; 
+                         90 280 1 1 1 4 1 2;
+                         90 300 1 1 1 4 1 2;
+                         90 240 2 1 1 4 1 2;
+                         90 280 2 1 1 4 1 2;
+                         90 240 1 1 2 4 1 2;
+                         90 260 1 1 2 4 1 2;
+                         90 300 1 1 2 4 1 2;
+                         90 260 2 1 2 4 1 2;
+                         90 260 2 1 2 4 1 4;
+                         90 280 1 1 2 4 0.9 10;
+                         90 280 1 1 1 4 1 6;
+                         90 300 1 1 1 4 1 6;
+                         50 240 1 3 1 3 1 10;
+                         90 300 1 1 1 3 1 10;
+                         70 280 1 3 2 3 0.6 8];   
 results = zeros(length(parameterCombinations), length(elements)+3);
 
 fprintf("-------------------------------------------------------------------------------\n")
@@ -39,7 +57,7 @@ for i=1:length(FitnessScalingFcns)
     SelectionFcn = SelectionFcns{params(4)};
     MutationFcn = MutationFcns{params(5)};
     CrossoverFcn = CrossoverFcns{params(6)};
-    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn);
+    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, params(7), params(8));
 end
 
 params = parameterCombinations(1, :);
@@ -50,7 +68,7 @@ for i=1:length(SelectionFcns)
     SelectionFcn = SelectionFcns{params(4)};
     MutationFcn = MutationFcns{params(5)};
     CrossoverFcn = CrossoverFcns{params(6)};
-    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn);
+    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, params(7), params(8));
 end
 
 params = parameterCombinations(1, :);
@@ -61,7 +79,7 @@ for i=1:length(MutationFcns)
     SelectionFcn = SelectionFcns{params(4)};
     MutationFcn = MutationFcns{params(5)};
     CrossoverFcn = CrossoverFcns{params(6)};
-    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn);
+    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, params(7), params(8));
 end
 
 params = parameterCombinations(1, :);
@@ -72,7 +90,18 @@ for i=1:length(CrossoverFcns)
     SelectionFcn = SelectionFcns{params(4)};
     MutationFcn = MutationFcns{params(5)};
     CrossoverFcn = CrossoverFcns{params(6)};
-    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn);
+    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, params(7), params(8));
+end
+
+params = parameterCombinations(1, :);
+for i=1:length(CrossoverFcns)
+    fprintf("CrossoverFcns iteration=%i/%i\n", i, length(CrossoverFcns));
+    params(6) = i;
+    FitnessScalingFcn = FitnessScalingFcns{params(3)};
+    SelectionFcn = SelectionFcns{params(4)};
+    MutationFcn = MutationFcns{params(5)};
+    CrossoverFcn = CrossoverFcns{params(6)};
+    [x,Fval,vals] = rosenbrock(params(1), params(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, params(7), params(8));
 end
 
 %% EXPERIMENTS
@@ -85,8 +114,9 @@ for i=1:length(parameterCombinations)
     CrossoverFcn = CrossoverFcns{parameters(6)};
     fprintf("now evaluating generations=%i and populations=%i, FitnessScalingFcn=%i,\n\t SelectionFcn=%i, MutationFcn=%i, CrossoverFcn=%i,\n\t iteration=%i/%i\n", parameters(1), parameters(2), parameters(3), parameters(4), parameters(5), parameters(6), i, length(parameterCombinations))
     tic
-    [x,Fval,vals] = rosenbrock(parameters(1), parameters(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn);
+    [x,Fval,vals] = rosenbrock(parameters(1), parameters(2), FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, parameters(7), parameters(8));
     time=toc;
+    x
     err = vals - MIN_COORD;
     err = err*err';
     tmp = [parameters, err, Fval, time]
@@ -100,7 +130,7 @@ save('metrics.mat','results');
 fprintf("saving results to csv\n")
 mkdir results
 csvwrite("results/results.csv", results);
-headers = cellstr(["Generations", "Populationsize", "FitnessScalingFcns", "SelectionFcns", "MutationFcns", "CrossoverFcns", "error", "Fval", "time"]);
+headers = cellstr(["Generations", "Populationsize", "FitnessScalingFcns", "SelectionFcns", "MutationFcns", "CrossoverFcns", "CrossoverFraction", "PopInitValues", "error", "Fval", "time"]);
 csvwrite_with_headers('results/results_headers.csv', results, headers);
 
 fprintf("-------------------------------------------------------------------------------\n")

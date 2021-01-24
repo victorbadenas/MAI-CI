@@ -1,5 +1,5 @@
 %https://es.mathworks.com/matlabcentral/answers/453836-how-can-i-store-the-value-at-each-iteration-of-a-genetic-algorithm
-function [x,Fval,vals] = Rosenbrock(Generations, PopulationSize, FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, PopInitRange) 
+function [x,Fval,vals] = rosenbrock(Generations, PopulationSize, FitnessScalingFcn, SelectionFcn, MutationFcn, CrossoverFcn, CrossoverFraction, PopInitValue) 
     arguments
         Generations {mustBeNumeric, mustBeReal, mustBeInteger} = 300;
         PopulationSize {mustBeNumeric, mustBeReal, mustBeInteger} = 100;
@@ -7,8 +7,11 @@ function [x,Fval,vals] = Rosenbrock(Generations, PopulationSize, FitnessScalingF
         SelectionFcn = @selectionstochunif;
         MutationFcn = @mutationgaussian;
         CrossoverFcn = @crossoverscattered;
-        PopInitRange (2,2) {mustBeNumeric,mustBeReal} = [-2 -2; 2 2];
+        CrossoverFraction = 0.8;
+        PopInitValue {mustBeNumeric,mustBeReal} = 2;
     end
+    PopInitRange = [-PopInitValue -PopInitValue; PopInitValue PopInitValue];
+
     %FitnessFunction = @(x)(1-x(1))^2+100*(x(2)-x(1)^2)^2;
     FitnessFunction = @myFitness;
     numberOfVariables = 2;
@@ -34,21 +37,17 @@ function [x,Fval,vals] = Rosenbrock(Generations, PopulationSize, FitnessScalingF
     %--Reproduction
     opts = gaoptimset(opts, 'MutationFcn', MutationFcn, 'CrossoverFcn', CrossoverFcn);
 
+    opts = gaoptimset(opts, 'CrossoverFraction', CrossoverFraction);
+%     opts = gaoptimset(opts, 'StallGenLimit', 5);
     rng default %rng
 
+    [x, Fval, exitFlag, Output] = ga(FitnessFunction, numberOfVariables, [], [], [], [], [], [], [], opts);
 
-    record = [];
-    for n=0:.05:1
-        opts = gaoptimset(opts, 'CrossoverFraction', n);
-        [x, Fval, exitFlag, Output] = ga(FitnessFunction, numberOfVariables, [], [], [], [], [], [], [], opts);
-        record = [record; Fval];
-
-%         fprintf('The number of generations was : %d\n', Output.generations);
-%         fprintf('The number of function evaluations was : %d\n', Output.funccount);
-%         fprintf('The best function value found was : %g\n', Fval);
-%         formatSpec = 'The best function value was found at point: %7.4f %7.4f \n';
-%         fprintf(formatSpec,x);
-    end
+    fprintf('The number of generations was : %d\n', Output.generations);
+%     fprintf('The number of function evaluations was : %d\n', Output.funccount);
+%     fprintf('The best function value found was : %g\n', Fval);
+%     formatSpec = 'The best function value was found at point: %7.4f %7.4f \n';
+%     fprintf(formatSpec,x);
 
     function y = myFitness(x)
         y = 100*(x(1)^2-x(2))^2 + (1-x(1))^2;
